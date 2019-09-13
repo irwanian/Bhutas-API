@@ -26,11 +26,13 @@ app.get('/testcrypto', (req, res)=> {
 const { productsRouter,
         categoriesRouter,
         brandsRouter,
-        UsersRouter } = require('./Router')
+        UsersRouter,
+        transactionRouter } = require('./Router')
 
 app.use('/products', productsRouter)
 app.use('/categories', categoriesRouter)
 app.use('/brands', brandsRouter)
 app.use('/users', UsersRouter)
+app.use('/transaction', transactionRouter)
 
 app.listen(port, ()=> console.log('API Aktif di port: ' + port));

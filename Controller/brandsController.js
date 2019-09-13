@@ -13,12 +13,22 @@ module.exports = {
         })
     },
     getCertainBrands: (req, res) => {
-        var sql = `select p.*, b.*
-                   from products p
-                   join brands b
-                   on b.id = p.brand_id
-                   where p.brand_id =${req.params.id}
-                   and p.isdeleted = 0 `
+        var sql = `SELECT p.productname,
+        p.id as product_id,
+        p.description,
+        p.price,
+        p.discount,
+        p.image as picture,
+        c.categoryname as category,
+        b.brandname as brand,
+        b.image as logo
+        from products p
+        join categories c
+        on c.id = p.category_id
+        join brands b
+        on b.id = p.brand_id
+        where isdeleted = 0
+        and b.id =${req.params.id}`
                    
         connection.query(sql, (err, results) => {
             if(err) res.status(500).send({message: 'an error occurred when fetching data', err})
@@ -37,7 +47,7 @@ module.exports = {
                 }
     
                 const { image } = req.files;
-                console.log(image)
+                console.log(image + ' image brand')
                 const imagePath = image ? path + '/' + image[0].filename : null;
                 console.log(imagePath)
     
@@ -88,7 +98,7 @@ module.exports = {
             
              var sql=`select * from brands`
             connection.query(sql, (err2, results2)=>{
-                if(err) return res.status(500).sjson({message : 'there is an error occured'})
+                if(err2) return res.status(500).sjson({message : 'there is an error occured', err2})
                 console.log(results2)
 
                 res.send(results2)
@@ -102,7 +112,7 @@ module.exports = {
     
             if(results.length > 0) {
                 const path = '/post/images'; //file save path
-                const upload = uploader(path, 'POS').fields([{ name: 'image'}]); //uploader(path, 'default prefix')
+                const upload = uploader(path, 'BHT').fields([{ name: 'image'}]); //uploader(path, 'default prefix')
     
                 upload(req, res, (err) => {
                     if(err){

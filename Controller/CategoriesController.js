@@ -11,12 +11,22 @@ module.exports = {
         })
     },
     getCertaincategory: (req, res) => {
-        var sql = `select * from categories c
-                   join products p
-                   on p.category_id = c.id 
-                   where c.id =${req.params.id}
-                   and isdeleted = 0`
-
+        var sql = `SELECT p.productname,
+        p.id as product_id,
+        p.description,
+        p.price,
+        p.discount,
+        p.image as picture,
+        c.categoryname as category,
+        b.brandname as brand,
+        b.image as logo
+        from products p
+        join categories c
+        on c.id = p.category_id
+        join brands b
+        on b.id = p.brand_id
+        where isdeleted = 0
+        and c.id =${req.params.id}`
         connection.query(sql, (err, results) => {
             if(err) return res.status(500).send({message: 'an error occurred when fetching data', err})
 

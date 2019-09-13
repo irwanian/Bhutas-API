@@ -8,7 +8,9 @@ router.get('/user', usersController.searchUser)
 router.post('/addnewuser', usersController.registerNewUser)
 router.put('/verification', usersController.emailVerification)
 router.post('/resendemailverification', usersController.resendEmailVerification)
-router.post('/keeplogged', usersController.keepLogged)
+router.get('/keeplogged', usersController.keepLogged)
 router.post('/login', usersController.login)
+router.post('/logout', usersController.logoutUser)
+
 
 module.exports = router
