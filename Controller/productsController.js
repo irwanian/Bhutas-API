@@ -129,6 +129,11 @@ module.exports = {
         p.description,
         p.price,
         p.discount,
+        ps.size_46,
+        ps.size_47,
+        ps.size_48,
+        ps.size_49,
+        ps.size_50,
         p.image as picture,
         c.categoryname as category,
         b.brandname as brand,
@@ -138,21 +143,15 @@ module.exports = {
         on c.id = p.category_id
         join brands b
         on b.id = p.brand_id
+        join productstocks ps
+        on ps.productid = p.id
         where isdeleted = 0 
         and p.id = ${req.params.id}`
-        connection.query(sql, (err, products) => {
+        connection.query(sql, (err, results) => {
             if(err) return res.status(500).send(err)
 
-            sql = `select * from productstocks where productid = ${req.params.id}`
-            connection.query(sql, (err1, stocks) => {
-                if(err1) return res.status(500).send(err1)
-
-                return res.status(200).send({
-                    productData: products,
-                    productStock: stocks
-                })
+                return res.status(200).send(results)
             })
-        })
     },
     addNewProduct: (req, res) => {
         

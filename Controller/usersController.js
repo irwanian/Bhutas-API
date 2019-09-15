@@ -44,7 +44,8 @@ module.exports = {
                     fullname,
                     password: hashPassword,
                     email,
-                    last_login : new Date()
+                    last_login : new Date(),
+                    is_login: 1
                 }
                 var sql = `insert into users set ?`
                 
@@ -121,7 +122,7 @@ module.exports = {
                             }
     
                             console.log('Resend Email Verification Success, Bro!!');
-                            return res.status(200).send({results})
+                            return res.status(200).send(results)
                 })
             })
         },
@@ -129,50 +130,67 @@ module.exports = {
             if(!req.query.email){
                 req.query.email === ''
             }
-            console.log(req)
+            // console.log(req)
             var sql = `select * from users where email = '${req.query.email}'`
             connection.query(sql, (err, results)=> {
                 if(err) return res.status(500).send({status : 'error', err})
                
                 if(results.length === 0){
-                    return res.status(500).send({status: 'error', status: 'User Not Found'})
+                    return res.status(500).send({status: 'error', message: 'User Not Found'})
                 }
                 
                 console.log(results)
-                res.status(200).send({results})
+                res.status(200).send(results)
             })
         },
         login : (req, res)=>{
             var { email, password } = req.body
             var hashPassword = crypto.createHmac('sha256', 'generateRandomString').update(password).digest('hex')
 
-            var sql = `select * from users where email='${email}' and password='${hashPassword}'`
+            console.log('password nya ' + password)
+            console.log('setelah di-hash jadi ' + hashPassword)
+
+            var sql = `select * from users where email='${email}' and password= '${password}'`
             connection.query(sql, (err, results)=> {
                 if(err) return res.status(500).send({status: 'error', err})
-    
-                if(results.length === 0){
-                    return res.status(200).send({status: 'error', message: 'email or password incorrect'})
-                }
-
+                
+                
                 const data= {
-                    email: email,
-                    password: hashPassword,
                     last_login: new Date(),
                     is_login: 1
                 }
-
-                var sql = `update users set ? where email= '${email}' and password = '${hashPassword}'`
+                
+                var sql = `update users set ? where email= '${email}'`
                 
                 connection.query(sql, data, (err1, results)=> {
                     
                     if(err1) return res.status(500).send({message: 'an error occurred when updating last_login', err1})
+                    
+                    var sql = `select * from users where email = '${email}' and password = '${password}'`
+                    
+                    connection.query(sql, (err2, results)=> {
+                        
+                        if(err2) return res.status(500).send(err2)
+                        console.log(results)            
+                        // if(results.length === 0){
+                        //     return res.status(500).send({status: 'error', message: 'email or password incorrect'})
+                        // }
+                        return res.status(200).send(results)
+                    })
 
-                    return res.status(200).send(results)
                 })
             })
     },
     logoutUser: (req, res)=> {
-        console.log(req.body)
-        // connection.query(`update users set = 0 where email =`)
+        connection.query(`update users set is_login = 0 where email = '${req.query.email}'`, (err, results)=> {
+            if(err) return res.status(500).send({ message: 'error updating is login'})
+
+            connection.query(`select * from users where email = '${req.query.email}'`, (err1, results)=> {
+                if(err1) return res.status(500).send({ message: 'error retrieving user data'})
+
+                // console.log(results)
+                res.status(200).send(results)
+            })
+        })
     }
 }

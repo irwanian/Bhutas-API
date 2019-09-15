@@ -10,7 +10,7 @@ router.put('/verification', usersController.emailVerification)
 router.post('/resendemailverification', usersController.resendEmailVerification)
 router.get('/keeplogged', usersController.keepLogged)
 router.post('/login', usersController.login)
-router.post('/logout', usersController.logoutUser)
+router.put('/logout', usersController.logoutUser)
 
 
 module.exports = router
