@@ -6,5 +6,7 @@ const { transactionController } = require('../Controller')
 router.get('/usercart/:id', transactionController.getUserCartData)
 router.post('/addtocart', transactionController.addToCart)
 router.get('/cartcontent/:id', transactionController.getCartTotalQty)
+router.put('/deletecart/:id', transactionController.deleteCartProduct)
+router.post('/addtransaction/:id', transactionController.addTransactionDetail)
 
 module.exports = router
