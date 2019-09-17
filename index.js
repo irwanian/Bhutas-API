@@ -27,12 +27,14 @@ const { productsRouter,
         categoriesRouter,
         brandsRouter,
         UsersRouter,
+        cartRouter,
         transactionRouter } = require('./Router')
 
 app.use('/products', productsRouter)
 app.use('/categories', categoriesRouter)
 app.use('/brands', brandsRouter)
 app.use('/users', UsersRouter)
-app.use('/transaction', transactionRouter)
+app.use('/transaction', cartRouter)
+app.use('/checkout', transactionRouter)
 
 app.listen(port, ()=> console.log('API Aktif di port: ' + port));
