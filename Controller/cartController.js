@@ -5,6 +5,7 @@ module.exports = {
         let sql =  `SELECT p.productname,
                     p.id as product_id,
                     p.price,
+                    u.id as user,
                     p.discount,
                     p.image as picture,
                     c.categoryname as category,
@@ -35,7 +36,7 @@ module.exports = {
                     
                     connection.query(sql, (err, results)=> {
                         if(err) return res.status(500).send(err)
-                        
+                        console.log(results)
                         
                         res.status(200).send(results)
                     })
@@ -43,7 +44,7 @@ module.exports = {
     addToCart: (req, res)=> {
         const { product_id, user_id, qty, price, total_price, size } = req.body
 
-        let sql = `select * from cart where user_id = ${user_id} and size = ${size} and product_id = ${product_id} and move_to_trx = 0`
+        let sql = `select * from cart where user_id = ${user_id} and size = ${size} and product_id = ${product_id} and product_deleted = 0 and move_to_trx = 0`
 
         connection.query(sql, (err, results)=> {
             if(err) res.status(500).send({message: 'error retrieving cart detail'})
@@ -75,7 +76,7 @@ module.exports = {
                     if(product_id === 0 || qty === 0 || price === 0|| total_price === 0){
                         res.status(500).send({message: 'an error occurred, please contact the administrator', err})
                 }
-                    
+                    console.log(results)
                     res.status(200).send(results)
                 })
         })
@@ -98,10 +99,11 @@ module.exports = {
         connection.query(sql, (err, results)=> {
             if(err) return res.status(500).send({message: 'an error occurred when deleting data'})
 
-            sql = ` SELECT p.productname,
+         sql =  `SELECT p.productname,
                     p.id as product_id,
                     p.price,
                     p.discount,
+                    u.id as user,
                     p.image as picture,
                     c.categoryname as category,
                     b.brandname as brand,
@@ -124,13 +126,16 @@ module.exports = {
                     on ca.product_id = p.id
                     join users u
                     on u.id = ca.user_id
-                    where u.id = ${req.params.id}
+                    where u.id = ${req.params.user}
                     and ca.move_to_trx = 0
                     and ca.product_deleted = 0
                     `
 
                     connection.query(sql, (err1, results)=> {
                         if(err1) return res.status(500).send(err1)
+
+                        console.log('data cart')
+                        console.log(results)
 
                         res.status(200).send(results)
             })

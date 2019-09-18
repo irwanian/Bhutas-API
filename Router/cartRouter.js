@@ -6,7 +6,7 @@ const { cartController } = require('../Controller')
 router.get('/usercart/:id', cartController.getUserCartData )
 router.post('/addtocart', cartController.addToCart)
 router.get('/cartcontent/:id', cartController.getCartTotalQty)
-router.put('/deletecart/:id', cartController.deleteCartProduct)
+router.put('/deletecart/:id/:user', cartController.deleteCartProduct)
 router.post('/addtransaction/:id', cartController.cartCheckout)
 
 module.exports = router

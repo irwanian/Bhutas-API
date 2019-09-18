@@ -10,8 +10,8 @@ router.post('/addproduct', productsController.addNewProduct)
 router.get('/searchproducts', productsController.searchProducts)
 router.get('/productdetail/:id', productsController.getSpecifictProduct)
 router.put('/deleteproduct/:id', productsController.deleteProduct)
-router.patch('/editproduct/:id', productsController.editProduct)
+router.put('/editproduct/:id', productsController.editProduct)
 router.get('/stocks/:id', productsController.getTotalStocks)
-router.patch('/stocks/:id', productsController.updateProductStock)
+router.put('/stocks/:id', productsController.updateProductStock)
 
 module.exports = router

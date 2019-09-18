@@ -282,25 +282,26 @@ module.exports = {
                     if(err){
                         return res.status(500).json({ message: 'Upload picture failed !', error: err.message });
                     }
-                    
-                    console.log(req.files)
-                    const { image } = req.files;
-                    console.log('image nya ' + image)
-                    const imagePath = image ? path + '/' + image[0].filename : null;
                     const data = JSON.parse(req.body.data);
-                    
+
                     const {
                         productname,
                         category_id,
                         brand_id,
                         description,
                         price,
-                        discount
+                        discount,
+                        oldPhoto
                     } = data
+
+                    console.log(req.files)
+                    const { image } = req.files;
+                    console.log('image nya ' + image)
+                    const imagePath = image ? path + '/' + image[0].filename : oldPhoto;
+                    delete data.oldPhoto
+                    console.log(data)
                     try {
-                        if(imagePath) {
-                            data.image = imagePath;
-                        }
+                        
                         sql = `Update products set productname = '${productname}',
                         price = ${price},
                         discount = ${discount},
@@ -317,7 +318,8 @@ module.exports = {
                                 }
                                 return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err1.message });
                             }
-                            if(imagePath) {
+                            console.log('update product')
+                            if(image) {
                                 fs.unlinkSync('./public' + results[0].image);
                             }
                             sql = `SELECT p.productname,
@@ -338,7 +340,7 @@ module.exports = {
 
                             connection.query(sql, (err2, getdata) => {
                                 if(err2) {
-                                    return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err1.message });
+                                    return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err1 });
                                 }
                                 // console.log(getdata)
                                 return res.status(200).send(getdata);

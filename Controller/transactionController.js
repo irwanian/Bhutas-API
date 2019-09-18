@@ -285,8 +285,9 @@ module.exports = {
                     from transaction t
                     join users u
                     on u.id = t.user_id
-                    where t.status = 5 
+                    where t.status > 1 
                     and t.user_id = ${req.params.id}
+                    order by transaction_id desc
                     `
         connection.query(sql, (err, results)=> {
             if(err) return res.status(500).send({message: 'error retrieving unsent products', err})
@@ -330,15 +331,18 @@ module.exports = {
         })
     },
     getAdminTrxHistory: (req, res) => {
-        let sql =  `SELECT
+        let sql =  `SELECT t.id,
                     t.id as transaction_id,
                     p.id as product_id,
                     p.productname,
+                    t.trx_proof as proof,
                     p.image as picture,
                     c.categoryname as category,
                     b.brandname as brand,
                     ti.price as price,
                     p.discount,
+                    t.status,
+                    u.fullname,
                     ti.qty as qty,
                     t.total_price as total
                     from products p
@@ -352,24 +356,14 @@ module.exports = {
                     on t.id = ti.transaction_id
                     join users u
                     on u.id = t.user_id
-                    where t.status = 6
+                    where t.status = 5 or t.status = 6
         `
         connection.query(sql, (err, results)=> {
             if(err) res.status(500).send({ message: 'error retrieving transaction data ', err})
 
-            // const today = new Date()
-            sql = `select id, total_price from transaction where user_id = ${req.params.id} and status = 6` 
-
-            connection.query(sql ,(err1, trxResults) => {
-                if(err1) res.status(500).send({message: `error retrieving transaction id`, err1})
                 
-                res.status(200).send({
-                                        transaction_data: results,
-                                        transaction_id: trxResults[trxResults.length - 1].id,
-                                        total: trxResults[trxResults.length - 1].total_price
-                                    })
+                res.status(200).send(results)
             })
-        })
     },
     getUserTrxHistory: (req, res) => {
         let sql =  `SELECT
