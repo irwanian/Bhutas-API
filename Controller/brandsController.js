@@ -4,7 +4,7 @@ const fs = require('fs')
 
 module.exports = {
     getBrands: (req, res) => {
-        var sql = `select * from brands`
+        var sql = `select * from brands where is_deleted = 0`
 
         connection.query(sql, (err, results) => {
             if(err) return res.status(500).send({message: 'an error occurred when fetching data', err})
@@ -28,6 +28,8 @@ module.exports = {
         join brands b
         on b.id = p.brand_id
         where isdeleted = 0
+        and c.is_deleted = 0
+        and b.is_deleted = 0
         and b.id =${req.params.id}`
                    
         connection.query(sql, (err, results) => {
@@ -65,7 +67,7 @@ module.exports = {
                     }
                    
                     console.log(results);
-                    sql = 'SELECT * from brands;';
+                    sql = 'SELECT * from brands where is_deleted = 0;';
                     connection.query(sql, (err, results) => {
                         if(err) {
                             console.log(err.message);
@@ -81,13 +83,13 @@ module.exports = {
         }
     },
         deleteBrands: (req, res)=> {
-            var sql = `select * from brands where id = ${req.params.id}` ;
+            var sql = `select * from brands where id = ${req.params.id} and is_deleted = 0` ;
     
             connection.query(sql, (err, results)=> {
                 if(err) return res.status(500).json({message : 'Error when fetching data'})
                 
                 if(results.length > 0){
-                    var sql = `delete from brands where id = ${req.params.id}`;
+                    var sql = `update brands set is_deleted = 1 where id = ${req.params.id} and is_deleted = 0`;
                     console.log(req.params.id);
                     
                     connection.query(sql, (err1, results1)=> {
@@ -96,7 +98,7 @@ module.exports = {
             }
             fs.unlinkSync('./public' + results[0].image)
             
-             var sql=`select * from brands`
+             var sql=`select * from brands where is_deleted = 0`
             connection.query(sql, (err2, results2)=>{
                 if(err2) return res.status(500).sjson({message : 'there is an error occured', err2})
                 console.log(results2)
@@ -106,7 +108,7 @@ module.exports = {
         })
     },
     editBrands: (req,res) => {
-        var sql = `SELECT * from brands where id = ${req.params.id};`;
+        var sql = `SELECT * from brands where id = ${req.params.id} and is_deleted = 0;`;
         connection.query(sql, (err, results) => {
             if(err) throw err;
     
@@ -129,7 +131,7 @@ module.exports = {
                             data.image = imagePath;
                             
                         }
-                        sql = `Update brands set ? where id = ${req.params.id};`
+                        sql = `Update brands set ? where id = ${req.params.id} and is_deleted = 0;`
                         connection.query(sql,data, (err1,results1) => {
                             if(err1) {
                                 if(imagePath) {
@@ -140,7 +142,7 @@ module.exports = {
                             if(imagePath) {
                                 fs.unlinkSync('./public' + results[0].image);
                             }
-                            sql = `Select * from brands ;`;
+                            sql = `Select * from brands where is_deleted = 0 ;`;
                             connection.query(sql, (err2,results2) => {
                                 if(err2) {
                                     return res.status(500).json({ message: "There's an error on the server. Please contact the administrator.", error: err1.message });

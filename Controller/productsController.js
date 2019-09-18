@@ -22,7 +22,9 @@ module.exports = {
         on c.id = p.category_id
         join brands b
         on b.id = p.brand_id
-        where isdeleted = 0`
+        where isdeleted = 0
+        and b.is_deleted = 0
+        and c.is_deleted = 0`
 
         connection.query(sql, (err, results) => {
             if(err) return res.status(500).send({message: 'error loading data', err})
@@ -62,7 +64,9 @@ module.exports = {
         join brands b
         on b.id = p.brand_id
         where isdeleted = 0 
-        and discount > 0`
+        and discount > 0
+        and b.is_deleted = 0
+        and c.is_deleted = 0`
 
         connection.query(sql, (err, results) => {
             if(err) return res.status(500).send({message: 'error loading data', err})
@@ -87,6 +91,8 @@ module.exports = {
         join brands b
         on b.id = p.brand_id
         where isdeleted = 0
+        and b.is_deleted = 0
+        and c.is_deleted = 0
         order by p.id desc
         limit 8`
 
@@ -114,6 +120,8 @@ module.exports = {
         join brands b
         on b.id = p.brand_id
         where isdeleted = 0
+        and b.is_deleted = 0
+        and c.is_deleted = 0
         and p.productname like '%${req.query.searching}%'`
 
         connection.query(sql, (err, results) => {
@@ -146,6 +154,8 @@ module.exports = {
         join productstocks ps
         on ps.productid = p.id
         where isdeleted = 0 
+        and b.is_deleted = 0
+        and c.is_deleted = 0
         and p.id = ${req.params.id}`
         connection.query(sql, (err, results) => {
             if(err) return res.status(500).send(err)
@@ -260,7 +270,9 @@ module.exports = {
                     on c.id = p.category_id
                     join brands b
                     on b.id = p.brand_id
-                    where isdeleted = 0`
+                    where isdeleted = 0
+                    and b.is_deleted = 0
+                    and c.is_deleted = 0`
 
             connection.query( sql, (err1, results)=>{
 
@@ -336,7 +348,9 @@ module.exports = {
                                     on c.id = p.category_id
                                     join brands b
                                     on b.id = p.brand_id
-                                    where isdeleted = 0`;
+                                    where isdeleted = 0
+                                    and b.is_deleted = 0
+                                    and c.is_deleted = 0`;
 
                             connection.query(sql, (err2, getdata) => {
                                 if(err2) {

@@ -2,7 +2,7 @@ const connection = require('../Database')
 
 module.exports = {
     getCategories: (req, res) => {
-        var sql = `select * from categories`
+        var sql = `select * from categories where is_deleted = 0`
 
         connection.query(sql, (err, results) => {
             if(err) return res.status(500).send({message: 'an error occurred when fetching data', err})
@@ -25,7 +25,9 @@ module.exports = {
         on c.id = p.category_id
         join brands b
         on b.id = p.brand_id
-        where isdeleted = 0
+        where p.isdeleted = 0
+        and c.is_deleted = 0
+        and b.is_deleted = 0
         and c.id =${req.params.id}`
         connection.query(sql, (err, results) => {
             if(err) return res.status(500).send({message: 'an error occurred when fetching data', err})
@@ -41,7 +43,7 @@ module.exports = {
             if(err1) return res.status(500).send({message: 'an error occurred when uploading data', err})
 
 
-            var sql = `select * from categories`
+            var sql = `select * from categories where is_deleted = 0`
 
             connection.query(sql, (err2, results) => {
             if(err2) return res.status(500).send({message: 'an error occurred when fetching data', err2})
@@ -52,12 +54,12 @@ module.exports = {
         })
     },
     deleteCategories: (req, res) => {
-        var sql = `delete from categories where id=${req.params.id}`
+        var sql = `update categories set is_deleted = 1 where id=${req.params.id}`
 
         connection.query(sql, (err, results) => {
             if(err) return res.status(500).send({message: 'an error occurred when deleting data', err})
 
-            var sql = `select * from categories`
+            var sql = `select * from categories where is_deleted = 0`
 
             connection.query(sql, (err2, results) => {
             if(err2) return res.status(500).send({message: 'an error occurred when fetching data', err2})
@@ -68,12 +70,12 @@ module.exports = {
         })
     },
     editcategories: (req, res) => {
-        var sql = `update categories set ? where id=${req.params.id}`
+        var sql = `update categories set ? where id=${req.params.id} and is_deleted = 0`
 
         connection.query(sql, req.body, (err, results) => {
             if(err) return res.status(500).send({message: 'an error occurred when updating data', err})
  
-            var sql = `select * from categories`
+            var sql = `select * from categories where is_deleted = 0`
 
             connection.query(sql, (err2, results) => {
             if(err2) return res.status(500).send({message: 'an error occurred when fetching data', err2})

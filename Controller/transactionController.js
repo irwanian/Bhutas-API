@@ -333,30 +333,15 @@ module.exports = {
     getAdminTrxHistory: (req, res) => {
         let sql =  `SELECT t.id,
                     t.id as transaction_id,
-                    p.id as product_id,
-                    p.productname,
                     t.trx_proof as proof,
-                    p.image as picture,
-                    c.categoryname as category,
-                    b.brandname as brand,
-                    ti.price as price,
-                    p.discount,
                     t.status,
-                    u.fullname,
-                    ti.qty as qty,
+                    users.fullname,
                     t.total_price as total
-                    from products p
-                    join transaction_item ti
-                    on ti.product_id = p.id
-                    join categories c
-                    on c.id = p.category_id
-                    join brands b
-                    on b.id = p.brand_id
-                    join transaction t
-                    on t.id = ti.transaction_id
-                    join users u
-                    on u.id = t.user_id
-                    where t.status = 5 or t.status = 6
+                    from transaction t
+                    join users 
+                    on users.id = t.user_id 
+                    where t.status > 4
+                    order by t.id desc
         `
         connection.query(sql, (err, results)=> {
             if(err) res.status(500).send({ message: 'error retrieving transaction data ', err})
