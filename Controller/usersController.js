@@ -120,7 +120,6 @@ module.exports = {
                                 console.log(err2);
                                 return res.status(500).send({status: 'error occurred when resending email verification', err : err2})
                             }
-    
                             console.log('Resend Email Verification Success, Bro!!');
                             return res.status(200).send(results)
                 })

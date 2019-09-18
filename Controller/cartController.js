@@ -98,7 +98,7 @@ module.exports = {
         connection.query(sql, (err, results)=> {
             if(err) return res.status(500).send({message: 'an error occurred when deleting data'})
 
-            sql = `SELECT p.productname,
+            sql = ` SELECT p.productname,
                     p.id as product_id,
                     p.price,
                     p.discount,
@@ -159,7 +159,6 @@ module.exports = {
 
                 connection.query(sql, (err2, results)=> {
                     if(err2) return res.status(500).send({ message: 'error updating transaction_item', err2})
-
                     sql = `update cart set move_to_trx = 1`
 
                     connection.query(sql, (err3, results)=> {
@@ -167,7 +166,6 @@ module.exports = {
 
                         sql = `update transaction set status = 1 where status = 0 and transaction_canceled = 0`
                             connection.query(sql, (err4, results)=> {
-
                                 res.status(200).send(results)
                         })                                 
                     })
