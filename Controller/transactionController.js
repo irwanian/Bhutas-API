@@ -125,7 +125,7 @@ module.exports = {
     acceptTrx: (req, res) => {
         let sql = `select t.*, ti.* from transaction t join transaction_item ti on t.id = ti.transaction_id
                    where status = 2
-                   and t.id = ${req.params.id} and transaction_canceled = 0`
+                   and t.id = ${req.params.id} and t.transaction_canceled = 0`
 
         connection.query(sql, (err, trxData)=> {
             if(err) return res.status(500).send({ message: 'error retrieving transaction data', err })
@@ -340,7 +340,7 @@ module.exports = {
                     from transaction t
                     join users 
                     on users.id = t.user_id 
-                    where t.status > 4
+                    where t.status > 3 
                     order by t.id desc
         `
         connection.query(sql, (err, results)=> {

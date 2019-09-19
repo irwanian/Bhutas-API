@@ -13,5 +13,6 @@ router.put('/deleteproduct/:id', productsController.deleteProduct)
 router.put('/editproduct/:id', productsController.editProduct)
 router.get('/stocks/:id', productsController.getTotalStocks)
 router.put('/stocks/:id', productsController.updateProductStock)
+router.get('/adminproducts', productsController.getAdminProducts)
 
 module.exports = router

@@ -4,7 +4,13 @@ const fs = require('fs')
 
 module.exports = {
     getProducts: (req, res) => {
-        
+        if(!req.query.page){
+            req.query.page = 1
+        }
+        offset = req.query.page * 6 - 6
+        console.log('ini page ' + req.query.page)
+        console.log('ini offset ' + offset)
+
         var sql = 
         `SELECT p.productname,
         p.id as product_id,
@@ -29,7 +35,17 @@ module.exports = {
         connection.query(sql, (err, results) => {
             if(err) return res.status(500).send({message: 'error loading data', err})
 
-            res.status(200).send(results)
+           sql += ` limit ${offset}, 6`
+
+           connection.query(sql, (err7, result7)=> {
+            if(err7) return res.status(500).send({message: 'error loading data', err7})
+            
+            return res.status(200).send({
+                dataProduct: result7,
+                totalPages: results.length,
+                pages: Number(req.query.page)
+            })
+        })
         })
     },
     getTotalStocks: (req, res) => {
@@ -72,6 +88,52 @@ module.exports = {
             if(err) return res.status(500).send({message: 'error loading data', err})
 
             res.status(200).send(results)
+        })
+    },
+    getAdminProducts: (req, res) => {
+        var sql = 
+        `SELECT p.productname,
+        p.id as product_id,
+        p.description,
+        p.price,
+        b.id as brand_id,
+        c.id as category_id,
+        p.discount,
+        p.image as picture,
+        c.categoryname as category,
+        b.brandname as brand,
+        b.image as logo
+        from products p
+        join categories c
+        on c.id = p.category_id
+        join brands b
+        on b.id = p.brand_id
+        where isdeleted = 0
+        and b.is_deleted = 0
+        and c.is_deleted = 0
+        order by product_id`
+
+        connection.query(sql, (err, results) => {
+            if(err) return res.status(500).send({message: 'error loading data', err})
+
+           
+            
+            return res.status(200).send(results)
+        })
+    },
+    getTotalStocks: (req, res) => {
+        let sql = `select ps.*,
+                    p.productname 
+                    from productstocks ps
+                    join products p
+                    on p.id = ps.productid
+                    where productid = ${req.params.id}`
+
+        connection.query(sql, (err, results)=> {
+            if(err) res.status(500).send({message: 'error when retrieving stock data', err})
+
+            res.status(200).send(results)
+            console.log(results)
         })
     },
     getNewArrivals: (req, res) => {
